@@ -1,67 +1,142 @@
-# Potwierdzenie zamówienia — instrukcja
+# Aktualizator ZD — instrukcja
 
-Aplikacja przepisuje daty dostaw z PDF-ów potwierdzeń zamówień Festo do kolumny
-`Features.Prognozowana data dostawy` w arkuszu z listą pozycji ZD.
+Aplikacja czyta **oferty** i **potwierdzenia zamówień** (PDF) od dostawców i wpisuje
+do arkusza ZD (eksport z enova):
 
-## Instalacja
+- **ceny** — kolumny `Cena`, `NettoCy`, `Suma.VATCy`, `BruttoCy`,
+- **terminy** — kolumna `Features.Prognozowana data dostawy`.
 
-1. Skopiuj `PotwierdzenieZamowienia.exe` do **`C:\PotwierdzenieZamowienia\`**.
-2. Na pulpicie utwórz **skrót** do tego pliku.
+Rozpoznaje dokumenty: Festo (oferty i potwierdzenia), OMRON, SMC, MISUMI, AMTEK,
+HARTING, TME, Sonepar, PF Electronic, eurobolt, PIKMET, Dźwignia, GPL, SCHUNK.
+Dokumenty innych dostawców czyta w **trybie ogólnym** — wtedy wszystko, co znajdzie,
+oznacza jako „do sprawdzenia”.
 
-**Nie uruchamiaj pliku z OneDrive, Pulpitu ani Dokumentów.** W firmie Pulpit
-i Dokumenty są przekierowane do OneDrive, a aplikacja rozpakowuje się przy każdym
-starcie — OneDrive potrafi zablokować ten proces i pojawia się błąd
-„Failed to load Python DLL" albo „Permission denied". Aplikacja sama ostrzega,
-gdy wykryje taką lokalizację. Wspólny plik ustawień (w `%APPDATA%`) może
-zostać na OneDrive — problem dotyczy wyłącznie samego pliku `.exe`.
+## W skrócie
 
-## Praca z aplikacją
+1. Karta **Dokumenty** — dodaj PDF-y z ofertami i potwierdzeniami, a niżej wskaż arkusz ZD.
+2. Kliknij **Wczytaj i porównaj**.
+3. Karta **Podgląd zmian** — przejrzyj zmiany; pozycje wymagające uwagi są na górze.
+4. Jeśli pojawi się pomarańczowy pasek — **Przejdź do konfliktów** i podejmij decyzje.
+5. **Zapisz do Excela** — wskaż, gdzie i pod jaką nazwą zapisać wynik (domyślnie nowy plik
+   obok oryginału).
 
-1. **Pliki** — dodaj jedno lub kilka potwierdzeń PDF i wskaż arkusz Excel.
-   Jeśli w folderze roboczym jest dokładnie jeden plik `.xlsx`, aplikacja
-   podpowie go automatycznie.
-2. **Wczytaj i porównaj** — aplikacja czyta dokumenty i przygotowuje plan zmian.
-3. **Podgląd zmian** — sprawdź, co zostanie wpisane. Zieleń oznacza wpis w pustą
-   komórkę, kolor zwykły nadpisanie istniejącej daty, szary brak zmiany.
-4. **Konflikty** — karta pojawia się tylko wtedy, gdy aplikacja nie potrafi
-   rozstrzygnąć czegoś sama. Dopóki zostaje choć jeden nierozstrzygnięty,
-   zapis jest zablokowany.
-5. **Zapisz do Excela** — przed zapisem powstaje kopia zapasowa obok oryginału,
-   nazwana `<nazwa> — kopia RRRR-MM-DD_GGMM.xlsx`.
+Instrukcję otwiera odnośnik **Instrukcja** w prawym górnym rogu okna albo klawisz **F1**.
 
-Arkusz musi być **zamknięty w Excelu** w chwili zapisu.
+## 1. Dokumenty
+
+- **Dodaj PDF-y…** — wybór plików; **Wskaż folder…** — wszystkie PDF-y z folderu;
+  **Usuń zaznaczony** — usuwa dokument z listy (plik na dysku zostaje).
+- Przy każdym dokumencie od razu widać, co aplikacja rozpoznała: dostawcę, typ (oferta /
+  potwierdzenie), numer, datę, walutę i liczbę pozycji. Pomarańczowy wpis „nieznany — tryb
+  ogólny” oznacza dostawcę bez profilu.
+- **Ceny w dok.** — informacja, jakie ceny podaje dokument: `netto`, `brutto` albo
+  `netto i brutto` (`—`, gdy dokument nie ma cen).
+- **Wpisz do Excela** — kliknij w komórkę i wybierz z listy. Do wyboru jest tylko to, co jest
+  w dokumencie: przy samym netto — tylko `netto` (`Cena`, `NettoCy`); przy samym brutto —
+  tylko `brutto` (`Suma.VATCy`, `BruttoCy`); przy obu — także `oba` (wszystkie cztery
+  kolumny, wprost z liczb dokumentu). Kolumny, których dokument nie dotyczy, zostają
+  w arkuszu bez zmian.
+- Zaznacz kilka dokumentów (Ctrl/Shift) i kliknij w komórkę jednego z nich — wybór dotyczy
+  wszystkich zaznaczonych. Dokumenty bez potrzebnych cen są pomijane (komunikat w pasku
+  stanu).
+- **Podwójny klik** w dokument otwiera jego podgląd PDF.
+- Pod tabelą pojawiają się ostrzeżenia zaznaczonego dokumentu, np. „brak możliwości
+  wykonania”.
+- **Arkusz z listą pozycji ZD** — przycisk **Wybierz…** wskazuje plik Excel (eksport ZD).
+
+## 2. Podgląd zmian
+
+Jeden wiersz na kod towaru.
+
+- **✓** — które pozycje zapisać. **Zaznacz wszystkie** / **Odznacz wszystkie** działa na całą
+  listę.
+- **Pewność**: ✔ — dane pewne (znany dostawca, kod zgodny 1:1); ⚠ — **do sprawdzenia** (kod
+  zapisany inaczej, kod z dopiskiem, nieznany dostawca, cena zmienia się o więcej niż 30 %).
+  Pozycje ⚠ są **domyślnie odznaczone** — zaznacz je ręcznie, jeśli się zgadzają.
+- **Cena było / jest / Różnica** — ▲ drożej, ▼ taniej, „nowa”, gdy w arkuszu było 0.
+- **Data było / jest** — gdy oferta podaje czas realizacji („2-3 tygodnie”), data jest
+  liczona od daty dokumentu i oznaczona „(z czasu real.)”. Potwierdzenie zamówienia ma
+  pierwszeństwo przed ofertą.
+- **Zmiana terminu** — 🙂 dostawa wcześniej niż w planie; 🙁 później, ale nie więcej niż
+  próg (domyślnie 30 dni); 😞 później o więcej niż próg. Próg ustawia się za kołem ⚙.
+- Pod tabelą są **szczegóły** zaznaczonego wiersza: dokument, strona, fragment z PDF i powód
+  ewentualnego „do sprawdzenia”.
+- **Podgląd PDF** — podwójny klik w wiersz (albo przycisk **Pokaż w PDF**) otwiera dokument
+  na stronie tej pozycji, z czerwoną ramką wokół niej. Okno można zostawić otwarte obok
+  (np. na drugim monitorze) — kolejna pozycja otworzy się w nim.
+- **Kolejność i filtry** — pozycje wymagające uwagi (⚠ albo cena w konflikcie) są na górze.
+  Lista **Pokaż** zawęża tabelę do: wymagających uwagi, zmian cen, zmian dat albo pozycji
+  bez zmian; lista **Dokument** — do jednego pliku. **Szukaj** obejmuje kod, nazwy, ZD
+  i nazwę dokumentu. Kliknięcie nagłówka sortuje po kolumnie.
+
+## 3. Konflikty
+
+- Karta pojawia się tylko wtedy, gdy aplikacja nie potrafi rozstrzygnąć czegoś sama;
+  w nazwie karty widać liczbę otwartych, np. „Konflikty (1)”.
+- Dopóki zostaje choć jeden nierozstrzygnięty, **zapis jest zablokowany** — na karcie
+  „Podgląd zmian” widać wtedy pomarańczowy pasek z przyciskiem **Przejdź do konfliktów**.
+- Przy opcjach z ceną przycisk **PDF** pokazuje tę pozycję w dokumencie.
+- Gdy kod jest w kilku wierszach arkusza (różne BOM-y / złożenia), cenę można wybrać
+  **osobno dla każdego wiersza** — opis wiersza podaje BOM, złożenie i ilość.
+
+## 4. Zapis do Excela
+
+- Po kliknięciu **Zapisz do Excela** aplikacja pyta, **gdzie i pod jaką nazwą** zapisać wynik.
+  Podpowiada nowy plik obok oryginału: `<nazwa> — zaktualizowany RRRR-MM-DD_GGMM.xlsx` —
+  wystarczy kliknąć „Zapisz”. Można też wybrać inny folder i wpisać własną nazwę.
+- Oryginał zostaje nietknięty, a aplikacja dalej pracuje na zapisanym pliku (kolejne
+  porównanie, np. z następną ofertą, buduje na nim).
+- Wybranie **samego oryginału** zapisuje w miejscu — przed zapisem powstaje kopia zapasowa
+  `<nazwa> — kopia RRRR-MM-DD_GGMM.xlsx`.
+- **Anuluj** w oknie zapisu niczego nie zapisuje.
+- Plik, który zapis zastępuje, musi być **zamknięty w Excelu** w chwili zapisu.
 
 ## Kiedy aplikacja pyta
 
 | Sytuacja | Co znaczy |
 |---|---|
-| Kod z PDF nie występuje w arkuszu | Potwierdzenie dotyczy innego zamówienia albo kod zapisano inaczej |
-| Kody arkusza nie występują w PDF | Zwykle arkusz obejmuje więcej niż jedno zamówienie — normalne |
-| Niezgodna ilość | Liczba sztuk w potwierdzeniu nie zgadza się z sumą w arkuszu |
-| Kilka dat na jednej pozycji | Dostawa częściowa — wybierz, którą datę wpisać |
-| Ten sam kod w dwóch potwierdzeniach | Różne daty w różnych zamówieniach — wybierz właściwą |
+| K1 — kod z dokumentu nie występuje w arkuszu | Potwierdzenie dotyczy innego zamówienia albo kod zapisano inaczej |
+| K2 — kody arkusza nie występują w potwierdzeniach | Zwykle arkusz obejmuje więcej niż jedno zamówienie — normalne |
+| K3 — niezgodna ilość | Liczba sztuk w potwierdzeniu nie zgadza się z sumą w arkuszu |
+| K4 — kilka dat na jednej pozycji | Dostawa częściowa — wybierz, którą datę wpisać |
+| K5 — różne daty w kilku potwierdzeniach | Wybierz właściwą |
+| K6 — inna waluta | Dokument jest np. w EUR, a wiersz w PLN. Domyślnie cena jest pomijana; można wpisać ją w walucie dokumentu (zmieni się waluta wiersza) |
+| K7 — dwie ceny jednego kodu w jednym dokumencie | Np. różne rabaty w dwóch sekcjach oferty — wybierz właściwą, także osobno dla każdego wiersza arkusza |
+| K8 — różne ceny w kilku dokumentach | Domyślnie podpowiadana cena z najnowszego dokumentu |
+
+## Ustawienia (⚙)
+
+- **Źródło aktualizacji** — GitHub albo udział sieciowy (z repozytorium, ścieżką i nazwą
+  pliku).
+- **Domyślny folder roboczy** — folder, w którym otwierają się okna wyboru PDF-ów i arkusza.
+- **Próg opóźnienia (dni)** — powyżej tylu dni opóźnienie jest oznaczane na czerwono (😞).
 
 ## Aktualizacje
 
-Aplikacja sama sprawdza dostępność nowszej wersji i pokazuje żółty pasek
-z przyciskiem „Pobierz i zainstaluj". Źródło aktualizacji (GitHub albo udział
-sieciowy) ustawia się za kołem ⚙. Przy braku dostępu do sieci lub repozytorium
-aplikacja milczy — to normalne, nie jest błędem.
+Aplikacja sama sprawdza dostępność nowszej wersji i pokazuje żółty pasek z przyciskiem
+„Pobierz i zainstaluj”. Przy braku dostępu do sieci lub repozytorium aplikacja milczy — to
+normalne, nie jest błędem.
 
-Po kliknięciu „Pobierz i zainstaluj" aplikacja zamknie się i uruchomi ponownie
-w nowej wersji.
+## Instalacja
+
+1. Skopiuj `AktualizatorZD.exe` do **`C:\AktualizatorZD\`**.
+2. Na pulpicie utwórz **skrót** do tego pliku.
+
+**Nie uruchamiaj pliku z OneDrive, Pulpitu ani Dokumentów.** W firmie Pulpit i Dokumenty są
+przekierowane do OneDrive, a aplikacja rozpakowuje się przy każdym starcie — OneDrive
+potrafi zablokować ten proces i pojawia się błąd „Failed to load Python DLL” albo
+„Permission denied”. Aplikacja sama ostrzega, gdy wykryje taką lokalizację.
 
 ## Gdy coś nie działa
 
-- **„Failed to load Python DLL"** — plik uruchomiony z OneDrive (patrz wyżej) albo
-  brak Microsoft Visual C++ 2015–2022 x64
-  (https://aka.ms/vs/17/release/vc_redist.x64.exe).
-- **Ostrzeżenie SmartScreen** — „Więcej informacji → Uruchom mimo to". Wraca po
-  każdej aktualizacji, dopóki plik nie jest podpisany cyfrowo.
-- **Plik pobrany z internetu jest zablokowany** — kliknij prawym na `.exe` →
-  Właściwości → Odblokuj. Dotyczy też sytuacji, gdy firmowa polityka blokuje
-  pliki `.exe` w folderze Pobrane — przenieś plik poza Pobrane.
-- **„Nie mogę zapisać pliku"** — arkusz jest otwarty w Excelu. Zamknij go
-  i spróbuj ponownie; żadne dane nie zostają utracone.
-- **„Nie rozpoznano żadnej pozycji"** — to nie jest potwierdzenie Festo albo
-  dostawca zmienił układ dokumentu. Zgłoś z załączonym PDF-em.
+- **„Failed to load Python DLL”** — plik uruchomiony z OneDrive (patrz wyżej) albo brak
+  Microsoft Visual C++ 2015–2022 x64 (https://aka.ms/vs/17/release/vc_redist.x64.exe).
+- **Ostrzeżenie SmartScreen** — „Więcej informacji → Uruchom mimo to”. Wraca po każdej
+  aktualizacji, dopóki plik nie jest podpisany cyfrowo.
+- **Plik pobrany z internetu jest zablokowany** — kliknij prawym na `.exe` → Właściwości →
+  Odblokuj.
+- **„Nie mogę zapisać pliku”** — plik docelowy jest otwarty w Excelu. Zamknij go i spróbuj
+  ponownie; żadne dane nie zostają utracone.
+- **„Nie rozpoznano żadnej pozycji”** — dokument nieznanego dostawcy, w którym nie ma
+  żadnego kodu z arkusza, albo znany dostawca zmienił układ dokumentu. Zgłoś z załączonym
+  PDF-em — dodanie profilu dostawcy to niewielka zmiana.
