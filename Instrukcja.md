@@ -7,9 +7,14 @@ do arkusza ZD (eksport z enova):
 - **terminy** — kolumna `Features.Prognozowana data dostawy`.
 
 Rozpoznaje dokumenty: Festo (oferty i potwierdzenia), OMRON, SMC, MISUMI, AMTEK,
-HARTING, TME, Sonepar, PF Electronic, eurobolt, PIKMET, Dźwignia, GPL, SCHUNK.
+HARTING, TME, Sonepar, PF Electronic, eurobolt, PIKMET, Dźwignia, GPL, SCHUNK, Elesa+Ganter.
 Dokumenty innych dostawców czyta w **trybie ogólnym** — wtedy wszystko, co znajdzie,
 oznacza jako „do sprawdzenia”.
+
+Do arkusza zawsze trafia **cena jednostkowa po rabacie** — także wtedy, gdy dokument liczy
+wartość pozycji od ceny przed rabatem, a rabat odejmuje dopiero w podsumowaniu (np.
+Elesa+Ganter). Jeśli w trybie ogólnym dokument wspomina o rabacie, a przy pozycjach nie
+ma ceny po rabacie, pod listą dokumentów pojawia się ostrzeżenie — sprawdź wtedy ceny.
 
 ## W skrócie
 
