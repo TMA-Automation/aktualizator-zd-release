@@ -7,7 +7,8 @@ do arkusza ZD (eksport z enova):
 - **terminy** — kolumna `Features.Prognozowana data dostawy`.
 
 Rozpoznaje dokumenty: Festo (oferty i potwierdzenia), OMRON, SMC, MISUMI, AMTEK,
-HARTING, TME, Sonepar, PF Electronic, eurobolt, PIKMET, Dźwignia, GPL, SCHUNK, Elesa+Ganter.
+HARTING, TME, Sonepar, PF Electronic, eurobolt, PIKMET, Dźwignia, GPL, SCHUNK, Elesa+Ganter,
+Alutec.
 Dokumenty innych dostawców czyta w **trybie ogólnym** — wtedy wszystko, co znajdzie,
 oznacza jako „do sprawdzenia”.
 
@@ -55,9 +56,16 @@ Jeden wiersz na kod towaru.
 
 - **✓** — które pozycje zapisać. **Zaznacz wszystkie** / **Odznacz wszystkie** działa na całą
   listę.
-- **Pewność**: ✔ — dane pewne (znany dostawca, kod zgodny 1:1); ⚠ — **do sprawdzenia** (kod
-  zapisany inaczej, kod z dopiskiem, nieznany dostawca, cena zmienia się o więcej niż 30 %).
+- **Pewność**: ✔ — dane pewne (znany dostawca, kod zgodny); ⚠ — **do sprawdzenia** (kod
+  z dopiskiem, kod znaleziony w opisie, nieznany dostawca, cena zmienia się o więcej niż 30 %).
   Pozycje ⚠ są **domyślnie odznaczone** — zaznacz je ręcznie, jeśli się zgadzają.
+  Kod zapisany inaczej — bez myślników i spacji (`3SU10000AB100AA0` = `3SU1000-0AB10-0AA0`)
+  albo z zerami wiodącymi (`0026101` = `26101`) — u znanego dostawcy jest pewny; szczegóły
+  pokazują wtedy „Informacja: kod zapisany inaczej”. W trybie ogólnym zostaje ⚠.
+- **Ilość dok. / ZD** — ilość z dokumentu i **suma** ilości ze wszystkich wierszy ZD z tym
+  kodem, np. `59,863 / 59,863 m` dla profilu pociętego na 32 odcinki. Gdy sumy się nie
+  zgadzają, na końcu jest `≠`, pozycja trafia do wymagających uwagi, a szczegóły podają
+  różnicę. Ceną jednostkową z dokumentu zostają uzupełnione wszystkie te wiersze.
 - **Cena było / jest / Różnica** — ▲ drożej, ▼ taniej, „nowa”, gdy w arkuszu było 0.
 - **Data było / jest** — gdy oferta podaje czas realizacji („2-3 tygodnie”), data jest
   liczona od daty dokumentu i oznaczona „(z czasu real.)”. Potwierdzenie zamówienia ma
@@ -69,9 +77,9 @@ Jeden wiersz na kod towaru.
 - **Podgląd PDF** — podwójny klik w wiersz (albo przycisk **Pokaż w PDF**) otwiera dokument
   na stronie tej pozycji, z czerwoną ramką wokół niej. Okno można zostawić otwarte obok
   (np. na drugim monitorze) — kolejna pozycja otworzy się w nim.
-- **Kolejność i filtry** — pozycje wymagające uwagi (⚠ albo cena w konflikcie) są na górze.
-  Lista **Pokaż** zawęża tabelę do: wymagających uwagi, zmian cen, zmian dat albo pozycji
-  bez zmian; lista **Dokument** — do jednego pliku. **Szukaj** obejmuje kod, nazwy, ZD
+- **Kolejność i filtry** — pozycje wymagające uwagi (⚠, cena w konflikcie albo różna ilość)
+  są na górze. Lista **Pokaż** zawęża tabelę do: wymagających uwagi, zmian cen, zmian dat,
+  różnej ilości albo pozycji bez zmian; lista **Dokument** — do jednego pliku. **Szukaj** obejmuje kod, nazwy, ZD
   i nazwę dokumentu. Kliknięcie nagłówka sortuje po kolumnie.
 
 ## 3. Konflikty
